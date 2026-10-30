@@ -1,14 +1,6 @@
+
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/binx6153/bintangsilver/
-    - /bin/cp -R app $DEPLOYPATH
-    - /bin/cp -R bootstrap $DEPLOYPATH
-    - /bin/cp -R config $DEPLOYPATH
-    - /bin/cp -R database $DEPLOYPATH
-    - /bin/cp -R resources $DEPLOYPATH
-    - /bin/cp -R routes $DEPLOYPATH
-    - /bin/cp -R vendor $DEPLOYPATH
-    - /bin/cp artisan $DEPLOYPATH
-    - /bin/cp composer.json $DEPLOYPATH
-    - /bin/cp composer.lock $DEPLOYPATH
+    - export DEPLOYPATH=/home/binx6153/bintangsilver
+    - /bin/cp -R app bootstrap config database resources routes public artisan composer.json composer.lock $DEPLOYPATH
