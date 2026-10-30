@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bintang Silver — Perak Tempaan Modern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Work+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f8fd;
+    --bg-2:#ffffff;
+    --ink:#0a1830;
+    --sterling:#48607d;
+    --sterling-dim:#8398b0;
+    --blue:#155ef2;
+    --blue-2:#00c2ff;
+    --indigo:#5b3cf5;
+    --line:rgba(10,24,48,0.09);
+    --glass:rgba(255,255,255,0.62);
+    --glass-border:rgba(255,255,255,0.75);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--blue);color:#fff;}
+  a{color:inherit;text-decoration:none;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--blue);
+  }
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:400;line-height:1.05;color:var(--ink);}
+  .serif-italic{font-style:italic;font-weight:400;}
+  .grad-text{
+    background:linear-gradient(100deg,var(--indigo) 0%,var(--blue) 45%,var(--blue-2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  :focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:2px;}
+
+  /* ambient gradient blobs */
+  .blob{
+    position:absolute;border-radius:50%;
+    filter:blur(70px);
+    pointer-events:none;
+    z-index:0;
+  }
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(24px,-30px) scale(1.08);}
+    100%{transform:translate(0,0) scale(1);}
+  }
+  @keyframes drift2{
+    0%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-30px,26px) scale(1.05);}
+    100%{transform:translate(0,0) scale(1);}
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;top:18px;left:50%;transform:translateX(-50%);
+    z-index:100;width:min(1180px,92vw);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:100px;
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    box-shadow:0 8px 30px rgba(10,24,48,0.06);
+    transition:padding .3s ease, box-shadow .3s ease;
+  }
+  header.scrolled{
+    box-shadow:0 12px 34px rgba(21,94,242,0.12);
+  }
+  .logo{
+    display:flex;align-items:center;gap:9px;
+    font-family:'Fraunces',serif;
+    font-size:18px;letter-spacing:0.01em;
+    padding-left:6px;
+  }
+  .logo svg{width:24px;height:24px;flex-shrink:0;}
+  .logo img{width:30px;height:30px;flex-shrink:0;border-radius:8px;object-fit:cover;}
+  .logo svg path,.logo svg circle{stroke:url(#logoGrad);}
+  nav.links{display:flex;gap:8px;align-items:center;}
+  nav.links a{
+    font-size:13.5px;letter-spacing:0.01em;color:var(--sterling);
+    padding:9px 16px;border-radius:100px;
+    transition:color .25s ease, background .25s ease;
+  }
+  nav.links a:hover{color:var(--ink);background:rgba(21,94,242,0.07);}
+  .nav-cta{
+    background:linear-gradient(100deg,var(--blue),var(--blue-2));
+    padding:11px 22px !important;
+    font-size:13px;letter-spacing:0.02em;
+    color:#fff !important;
+    box-shadow:0 6px 18px rgba(21,94,242,0.28);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(21,94,242,0.36);background:linear-gradient(100deg,var(--blue),var(--blue-2)) !important;}
+  .burger{display:none;width:24px;height:18px;position:relative;cursor:pointer;z-index:200;}
+  .burger span{position:absolute;left:0;right:0;height:2px;border-radius:2px;background:var(--ink);transition:.3s ease;}
+  .burger span:nth-child(1){top:0;}
+  .burger span:nth-child(2){top:8px;}
+  .burger span:nth-child(3){top:16px;}
+  .burger.open span:nth-child(1){transform:translateY(8px) rotate(45deg);}
+  .burger.open span:nth-child(2){opacity:0;}
+  .burger.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg);}
+
+  .mobile-menu{
+    position:fixed;inset:0;background:rgba(244,248,253,0.98);backdrop-filter:blur(20px);z-index:150;
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+    gap:22px;padding:8vw;
+    transform:translateY(-100%);transition:transform .45s cubic-bezier(.77,0,.18,1);
+  }
+  .mobile-menu.open{transform:translateY(0);}
+  .mobile-menu a{font-family:'Fraunces',serif;font-size:32px;color:var(--ink);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    position:relative;
+    display:flex;align-items:center;
+    padding:0 6vw;
+    z-index:1;
+    overflow:hidden;
+  }
+  .blob-1{width:520px;height:520px;top:-160px;right:-120px;
+    background:radial-gradient(circle,rgba(0,194,255,0.42),rgba(21,94,242,0.22) 55%,transparent 75%);
+    animation:drift 14s ease-in-out infinite;}
+  .blob-2{width:420px;height:420px;bottom:-140px;left:-100px;
+    background:radial-gradient(circle,rgba(91,60,245,0.30),rgba(21,94,242,0.14) 60%,transparent 75%);
+    animation:drift2 17s ease-in-out infinite;}
+
+  .hero-grid{
+    display:grid;grid-template-columns:1.05fr 0.95fr;
+    gap:40px;align-items:center;width:100%;
+    padding-top:110px;position:relative;z-index:2;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--glass);border:1px solid var(--glass-border);
+    backdrop-filter:blur(10px);
+    padding:8px 16px;border-radius:100px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;
+    color:var(--blue);box-shadow:0 4px 16px rgba(21,94,242,0.08);
+  }
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-2);box-shadow:0 0 8px var(--blue-2);}
+  .hero h1{
+    font-size:clamp(46px,6.6vw,98px);
+    letter-spacing:-0.01em;
+    margin-top:20px;
+  }
+  .hero p.lede{
+    max-width:460px;
+    margin-top:24px;
+    font-size:16px;line-height:1.75;
+    color:var(--sterling);
+  }
+  .hero-actions{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;}
+  .btn-primary{
+    background:linear-gradient(100deg,var(--blue),var(--blue-2));
+    color:#fff;
+    padding:16px 30px;border-radius:100px;
+    font-size:13.5px;letter-spacing:0.03em;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:transform .3s ease, box-shadow .3s ease;
+    box-shadow:0 10px 26px rgba(21,94,242,0.3);
+    border:none;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(21,94,242,0.4);}
+  .btn-ghost{
+    border:1px solid var(--line);
+    color:var(--ink);background:var(--glass);
+    backdrop-filter:blur(10px);
+    padding:16px 30px;border-radius:100px;
+    font-size:13.5px;letter-spacing:0.03em;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .btn-ghost:hover{border-color:var(--blue);background:rgba(21,94,242,0.06);}
+
+  .trust-row{display:flex;gap:10px;margin-top:34px;flex-wrap:wrap;}
+  .trust-pill{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.06em;
+    color:var(--sterling);border:1px solid var(--line);border-radius:100px;
+    padding:7px 14px;background:rgba(255,255,255,0.5);
+  }
+
+  .hero-figure{position:relative;display:flex;align-items:center;justify-content:center;}
+  .hero-figure .ring-halo{
+    position:absolute;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(0,194,255,0.16),transparent 70%);
+    filter:blur(20px);
+  }
+  .hero-figure svg{width:100%;max-width:440px;height:auto;position:relative;z-index:2;}
+  .filigree-draw path{
+    fill:none;
+    stroke:url(#lineGrad);
+    stroke-width:1.3;
+    stroke-linecap:round;
+    stroke-dasharray:1400;
+    stroke-dashoffset:1400;
+    animation:draw 3s cubic-bezier(.6,0,.2,1) forwards;
+  }
+  .filigree-draw .gem{stroke:url(#gemGrad);stroke-width:1.6;}
+  .filigree-draw path:nth-child(2){animation-delay:.15s;}
+  .filigree-draw path:nth-child(3){animation-delay:.3s;}
+  .filigree-draw path:nth-child(4){animation-delay:.45s;}
+  .filigree-draw path:nth-child(5){animation-delay:.55s;}
+  @keyframes draw{to{stroke-dashoffset:0;}}
+
+  .scroll-cue{
+    position:absolute;bottom:36px;left:6vw;
+    display:flex;align-items:center;gap:12px;z-index:2;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;
+    color:var(--sterling-dim);text-transform:uppercase;
+  }
+  .scroll-cue .line{width:36px;height:1px;background:var(--line);position:relative;overflow:hidden;}
+  .scroll-cue .line::after{
+    content:"";position:absolute;left:-100%;top:0;bottom:0;width:100%;
+    background:var(--blue);
+    animation:slide 1.8s ease-in-out infinite;
+  }
+  @keyframes slide{50%{left:100%;}100%{left:100%;}}
+
+  section{position:relative;z-index:1;padding:130px 6vw;}
+  .section-head{max-width:640px;margin-bottom:64px;}
+  .section-head h2{font-size:clamp(32px,4vw,50px);margin-top:14px;}
+  .section-head p{margin-top:18px;color:var(--sterling);font-size:15.5px;line-height:1.75;max-width:520px;}
+
+  /* ---------- WARISAN / ABOUT ---------- */
+  .warisan{
+    background:linear-gradient(180deg,#eef4ff,#f4f8fd);
+    display:grid;grid-template-columns:0.9fr 1.1fr;gap:70px;align-items:center;
+  }
+  .warisan-visual{
+    position:relative;aspect-ratio:4/5;border-radius:28px;overflow:hidden;
+    border:1px solid var(--glass-border);
+    box-shadow:0 30px 60px -20px rgba(21,94,242,0.25);
+  }
+  .warisan-visual svg{width:100%;height:100%;}
+  .warisan-text p{color:var(--sterling);line-height:1.85;font-size:15.5px;margin-top:20px;}
+  .warisan-text p:first-of-type{margin-top:0;}
+  .stat-row{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;}
+  .stat{
+    background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;
+    padding:20px 26px;backdrop-filter:blur(10px);
+    box-shadow:0 10px 26px rgba(21,94,242,0.07);
+  }
+  .stat b{display:block;font-family:'Fraunces',serif;font-size:34px;font-weight:500;}
+  .stat span{font-size:11.5px;color:var(--sterling-dim);letter-spacing:0.03em;font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- KOLEKSI ---------- */
+  .koleksi-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:22px;
+  }
+  .kartu{
+    background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;
+    backdrop-filter:blur(14px);
+    padding:34px 26px 28px;
+    display:flex;flex-direction:column;gap:16px;
+    box-shadow:0 16px 34px -18px rgba(21,94,242,0.22);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease, border-color .4s ease;
+  }
+  .kartu:hover{transform:translateY(-8px);box-shadow:0 26px 50px -16px rgba(21,94,242,0.34);border-color:rgba(21,94,242,0.35);}
+  .kartu .icon-wrap{
+    height:110px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(140deg,rgba(21,94,242,0.08),rgba(0,194,255,0.08));
+    border-radius:16px;
+  }
+  .kartu svg{width:64px;height:64px;stroke:var(--blue);fill:none;stroke-width:1.1;transition:transform .5s ease;}
+  .kartu:hover svg{transform:translateY(-3px) scale(1.06);}
+  .kartu h3{font-size:19px;}
+  .kartu p{font-size:13px;color:var(--sterling-dim);line-height:1.6;}
+  .kartu .harga{
+    margin-top:auto;padding-top:14px;border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--blue);font-weight:500;
+  }
+
+  /* ---------- CABANG ---------- */
+  .cabang{background:linear-gradient(180deg,#f4f8fd,#eef4ff);}
+  .cabang-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  }
+  .cabang-kartu{
+    background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;
+    backdrop-filter:blur(14px);
+    padding:36px 28px;
+    display:flex;flex-direction:column;gap:14px;
+    box-shadow:0 16px 34px -18px rgba(21,94,242,0.2);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease;
+  }
+  .cabang-kartu:hover{transform:translateY(-8px);box-shadow:0 26px 50px -16px rgba(21,94,242,0.32);}
+  .cabang-kartu .pin{
+    width:46px;height:46px;border-radius:14px;
+    background:linear-gradient(140deg,var(--blue),var(--blue-2));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 18px rgba(21,94,242,0.32);
+  }
+  .cabang-kartu svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.4;}
+  .cabang-kartu .kota-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--blue);}
+  .cabang-kartu h3{font-size:23px;margin-top:0;}
+  .cabang-kartu p{font-size:14px;color:var(--sterling);line-height:1.7;}
+  .cabang-kartu .jam{
+    margin-top:auto;padding-top:14px;border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--sterling-dim);
+  }
+  .cabang-kartu a.maps{
+    font-size:12.5px;color:var(--blue);display:inline-flex;align-items:center;gap:6px;font-weight:500;
+    transition:gap .3s ease;
+  }
+  .cabang-kartu a.maps:hover{gap:10px;}
+
+  /* ---------- PROSES ---------- */
+  .proses{background:#f4f8fd;}
+  .proses-list{display:flex;flex-direction:column;gap:2px;}
+  .proses-item{
+    display:grid;grid-template-columns:100px 1fr 1.3fr;gap:32px;
+    padding:34px 28px;border-radius:20px;
+    align-items:start;
+    transition:background .35s ease;
+  }
+  .proses-item:hover{background:var(--glass);box-shadow:0 14px 30px -18px rgba(21,94,242,0.2);}
+  .proses-num{font-family:'IBM Plex Mono',monospace;color:var(--blue);font-size:14px;padding-top:4px;font-weight:500;}
+  .proses-item h3{font-size:23px;}
+  .proses-item p{color:var(--sterling);font-size:14.5px;line-height:1.75;padding-top:2px;}
+
+  /* ---------- TESTIMONI ---------- */
+  .testi-track{
+    display:flex;gap:22px;
+    overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 6px 20px;
+  }
+  .testi-track::-webkit-scrollbar{display:none;}
+  .testi-card{
+    flex:0 0 min(400px,86vw);
+    background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;
+    backdrop-filter:blur(14px);
+    padding:34px 30px;
+    scroll-snap-align:start;
+    box-shadow:0 16px 34px -18px rgba(21,94,242,0.18);
+  }
+  .testi-card .quote-mark{font-family:'Fraunces',serif;font-size:42px;line-height:1;font-style:italic;}
+  .testi-card p.txt{margin-top:10px;color:var(--sterling);font-size:15px;line-height:1.75;min-height:130px;}
+  .testi-name{margin-top:20px;font-size:13px;font-weight:500;}
+  .testi-role{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--sterling-dim);letter-spacing:0.05em;}
+
+  /* ---------- KONTAK ---------- */
+  .kontak{
+    display:grid;grid-template-columns:1fr 1fr;gap:70px;
+    position:relative;overflow:hidden;
+  }
+  .blob-3{width:460px;height:460px;top:20%;right:-160px;
+    background:radial-gradient(circle,rgba(21,94,242,0.18),transparent 70%);
+    animation:drift 16s ease-in-out infinite;}
+  .kontak h2{font-size:clamp(32px,4.4vw,56px);}
+  .kontak p.lede{color:var(--sterling);margin-top:18px;line-height:1.75;max-width:440px;}
+  .kontak-links{margin-top:34px;display:flex;flex-direction:column;gap:10px;}
+  .kontak-links a{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:18px 22px;border-radius:16px;
+    background:var(--glass);border:1px solid var(--glass-border);
+    font-size:14.5px;font-weight:400;
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .kontak-links a:hover{transform:translateX(6px);box-shadow:0 10px 24px -12px rgba(21,94,242,0.3);}
+  .kontak-links a span.arrow{transition:transform .3s ease;color:var(--blue);}
+  .kontak-links a:hover span.arrow{transform:translateX(6px);}
+
+  .form-card{
+    background:var(--glass);border:1px solid var(--glass-border);border-radius:26px;
+    padding:36px;backdrop-filter:blur(14px);
+    box-shadow:0 20px 44px -20px rgba(21,94,242,0.22);
+    position:relative;z-index:2;
+  }
+  .form-field{margin-bottom:20px;}
+  .form-field label{display:block;font-size:11.5px;letter-spacing:0.05em;color:var(--sterling-dim);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;}
+  .form-field input,.form-field textarea{
+    width:100%;background:rgba(255,255,255,0.6);border:1px solid var(--line);border-radius:12px;
+    color:var(--ink);font-family:'Work Sans',sans-serif;font-size:14.5px;padding:12px 14px;
+    transition:border-color .3s ease;
+  }
+  .form-field input:focus,.form-field textarea:focus{border-color:var(--blue);outline:none;}
+  .form-field textarea{resize:vertical;min-height:70px;}
+  .form-submit{
+    margin-top:6px;
+    background:linear-gradient(100deg,var(--blue),var(--blue-2));
+    border:none;color:#fff;border-radius:100px;
+    padding:15px 30px;font-size:13.5px;letter-spacing:0.03em;cursor:pointer;
+    box-shadow:0 10px 26px rgba(21,94,242,0.3);
+    transition:transform .3s ease, box-shadow .3s ease;font-family:'Work Sans',sans-serif;
+  }
+  .form-submit:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(21,94,242,0.4);}
+  .form-note{font-size:12px;color:var(--sterling-dim);margin-top:14px;}
+
+  footer{
+    padding:36px 6vw;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+    font-size:12px;color:var(--sterling-dim);
+  }
+  footer .logo{font-size:15px;display:flex;align-items:center;gap:8px;}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media (max-width:960px){
+    nav.links,.nav-cta{display:none;}
+    .burger{display:block;}
+    header{border-radius:24px;}
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-figure{order:-1;max-width:260px;margin:0 auto 10px;}
+    .warisan{grid-template-columns:1fr;}
+    .koleksi-grid{grid-template-columns:repeat(2,1fr);}
+    .cabang-grid{grid-template-columns:1fr;}
+    .proses-item{grid-template-columns:1fr;gap:8px;}
+    .kontak{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+    .filigree-draw path{stroke-dashoffset:0;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5b3cf5"/>
+      <stop offset="55%" stop-color="#155ef2"/>
+      <stop offset="100%" stop-color="#00c2ff"/>
+    </linearGradient>
+    <linearGradient id="gemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c2ff"/>
+      <stop offset="100%" stop-color="#155ef2"/>
+    </linearGradient>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#155ef2"/>
+      <stop offset="100%" stop-color="#00c2ff"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header id="siteHeader">
+  <div class="logo">
+    <img src="logobintang.jpeg" alt="Logo Bintang Silver">
+    Bintang&nbsp;Silver
+  </div>
+  <nav class="links">
+    <a href="#beranda">Beranda</a>
+    <a href="#warisan">Warisan</a>
+    <a href="#koleksi">Koleksi</a>
+    <a href="#cabang">Cabang</a>
+    <a href="#proses">Proses</a>
+    <a href="#kontak" class="nav-cta">Pesan Sekarang</a>
+  </nav>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#beranda">Beranda</a>
+  <a href="#warisan">Warisan</a>
+  <a href="#koleksi">Koleksi</a>
+  <a href="#cabang">Cabang</a>
+  <a href="#proses">Proses</a>
+  <a href="#kontak">Kontak</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="beranda">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="hero-grid">
+    <div>
+      <div class="badge"><span class="dot"></span>Kotagede, Yogyakarta — sejak 1948</div>
+      <h1>Perak yang<br>mengalir jadi<br><span class="grad-text">karya modern.</span></h1>
+      <p class="lede">Bintang Silver menempa cincin, kalung, gelang, dan anting dari perak murni 925 dengan teknik filigree turun-temurun, dipadukan desain masa kini. Setiap goresan motif dikerjakan oleh pengrajin, bukan cetakan massal.</p>
+      <div class="hero-actions">
+        <a href="#koleksi" class="btn-primary">Lihat Koleksi
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+        </a>
+        <a href="#kontak" class="btn-ghost">Pesan via WhatsApp</a>
+      </div>
+      <div class="trust-row">
+        <span class="trust-pill">✓ Perak 925 Bersertifikat</span>
+        <span class="trust-pill">✓ Garansi 1 Tahun</span>
+        <span class="trust-pill">✓ Custom Desain Gratis</span>
+      </div>
+    </div>
+    <div class="hero-figure">
+      <div class="ring-halo"></div>
+      <svg class="filigree-draw" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg">
+        <path class="gem" d="M200 60 L235 100 L200 150 L165 100 Z"/>
+        <path d="M200 150 C120 170 90 230 120 300 C140 350 190 380 200 420"/>
+        <path d="M200 150 C280 170 310 230 280 300 C260 350 210 380 200 420"/>
+        <path d="M120 300 C90 280 60 290 55 250 C50 210 90 200 110 220 C130 240 120 270 120 300 Z"/>
+        <path d="M280 300 C310 280 340 290 345 250 C350 210 310 200 290 220 C270 240 280 270 280 300 Z"/>
+      </svg>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Gulir</span><span class="line"></span></div>
+</section>
+
+<!-- WARISAN -->
+<section class="warisan" id="warisan">
+  <div class="warisan-visual reveal">
+    <svg viewBox="0 0 300 375" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="panelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#dbeaff"/>
+          <stop offset="100%" stop-color="#eef6ff"/>
+        </linearGradient>
+      </defs>
+      <rect width="300" height="375" fill="url(#panelGrad)"/>
+      <g fill="none" stroke="#5c7fa0" stroke-width="0.8" opacity="0.9">
+        <circle cx="150" cy="150" r="70"/>
+        <circle cx="150" cy="150" r="46"/>
+        <path d="M150 80 Q190 150 150 220 Q110 150 150 80 Z"/>
+        <path d="M80 150 Q150 110 220 150 Q150 190 80 150 Z"/>
+      </g>
+      <g fill="none" stroke="url(#lineGrad)" stroke-width="1.1">
+        <path d="M40 300 C90 270 120 320 170 295 C210 275 250 310 280 290"/>
+        <path d="M40 320 C90 340 130 300 170 325 C210 345 250 310 280 330"/>
+      </g>
+    </svg>
+  </div>
+  <div class="warisan-text reveal">
+    <p class="eyebrow">Warisan Tiga Generasi</p>
+    <h2>Dari bengkel kecil<br>di Jagalan, menuju<br><span class="serif-italic grad-text">lemari perhiasan</span> Anda.</h2>
+    <p>Bintang Silver berdiri di kampung perak Kotagede, kawasan yang telah menempa logam mulia sejak zaman Kesultanan Mataram. Kami meneruskan teknik filigree — merangkai kawat perak sehalus rambut menjadi motif sulur dan bunga.</p>
+    <p>Setiap perhiasan melalui proses melebur, menempa, mengukir, hingga memoles secara manual. Tidak ada dua karya yang benar-benar identik — dan itu bagian dari nilainya.</p>
+    <div class="stat-row">
+      <div class="stat"><b>76</b><span>Tahun berkarya</span></div>
+      <div class="stat"><b>925</b><span>Kadar perak murni</span></div>
+      <div class="stat"><b>12</b><span>Pengrajin filigree</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- KOLEKSI -->
+<section id="koleksi">
+  <div class="section-head reveal">
+    <p class="eyebrow">Koleksi</p>
+    <h2>Empat bentuk,<br><span class="grad-text">satu ketukan tangan.</span></h2>
+    <p>Dipilah menurut cara pakai, bukan musim. Semua dibuat dari perak 925 dengan opsi lapis rhodium agar tahan kusam. Harga dihitung <strong>per gram</strong> sesuai berat dan tingkat kerumitan motif — mengikuti harga pasar perak harian.</p>
+  </div>
+  <div class="koleksi-grid reveal">
+    <div class="kartu">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="60" r="26"/><path d="M38 38 L50 18 L62 38"/><path d="M44 38 L50 26 L56 38"/></svg>
+      </div>
+      <h3>Cincin</h3>
+      <p>Filigree bunga melati, permukaan bertekstur tempa tangan, ukuran custom.</p>
+      <div class="harga">Rp 25.000–40.000 / gram</div>
+    </div>
+    <div class="kartu">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100"><path d="M25 20 Q50 55 75 20"/><circle cx="50" cy="70" r="10"/><path d="M50 55 L50 60"/></svg>
+      </div>
+      <h3>Kalung</h3>
+      <p>Rantai anyam halus dengan liontin motif sulur khas Kotagede.</p>
+      <div class="harga">Rp 25.000–40.000 / gram</div>
+    </div>
+    <div class="kartu">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="30" ry="22"/><path d="M35 34 Q50 24 65 34" stroke-dasharray="3 3"/></svg>
+      </div>
+      <h3>Gelang</h3>
+      <p>Manset terbuka bermotif ukir dalam, nyaman untuk pemakaian harian.</p>
+      <div class="harga">Rp 25.000–40.000 / gram</div>
+    </div>
+    <div class="kartu">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100"><path d="M50 25 L50 45"/><circle cx="50" cy="45" r="4"/><path d="M40 45 Q50 75 60 45"/></svg>
+      </div>
+      <h3>Anting</h3>
+      <p>Model gantung ringan berbentuk kuncup bunga, aman untuk kulit sensitif.</p>
+      <div class="harga">Rp 25.000–40.000 / gram</div>
+    </div>
+  </div>
+</section>
+
+<!-- CABANG -->
+<section class="cabang" id="cabang">
+  <div class="section-head reveal">
+    <p class="eyebrow">Cabang Kami</p>
+    <h2>Tiga kota,<br><span class="grad-text">satu tempaan tangan.</span></h2>
+    <p>Kunjungi butik kami untuk melihat langsung kilau perak 925 dan konsultasi desain custom.</p>
+  </div>
+  <div class="cabang-grid reveal">
+    <div class="cabang-kartu">
+      <div class="pin">
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>
+      </div>
+      <span class="kota-label">Kantor Pusat</span>
+      <h3>Bandung</h3>
+      <p>Jl. Braga No. 24, Sumur Bandung, Kota Bandung, Jawa Barat</p>
+      <a class="maps" href="https://maps.google.com/?q=Jl.+Braga+Bandung" target="_blank" rel="noopener">Buka di peta →</a>
+      <div class="jam">Senin–Sabtu, 09.00–19.00</div>
+    </div>
+    <div class="cabang-kartu">
+      <div class="pin">
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>
+      </div>
+      <span class="kota-label">Cabang</span>
+      <h3>Jakarta</h3>
+      <p>Plaza Senayan Lt. 2, Jl. Asia Afrika No. 8, Jakarta Selatan</p>
+      <a class="maps" href="https://maps.google.com/?q=Plaza+Senayan+Jakarta" target="_blank" rel="noopener">Buka di peta →</a>
+      <div class="jam">Setiap hari, 10.00–21.00</div>
+    </div>
+    <div class="cabang-kartu">
+      <div class="pin">
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>
+      </div>
+      <span class="kota-label">Cabang</span>
+      <h3>Bogor</h3>
+      <p>Jl. Pajajaran No. 15, Bogor Tengah, Kota Bogor, Jawa Barat</p>
+      <a class="maps" href="https://maps.google.com/?q=Jl.+Pajajaran+Bogor" target="_blank" rel="noopener">Buka di peta →</a>
+      <div class="jam">Senin–Sabtu, 09.30–18.30</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROSES -->
+<section class="proses" id="proses">
+  <div class="section-head reveal">
+    <p class="eyebrow">Proses</p>
+    <h2>Dari batangan perak<br><span class="grad-text">menjadi karya jadi.</span></h2>
+  </div>
+  <div class="proses-list reveal">
+    <div class="proses-item">
+      <div class="proses-num">01 — Lebur</div>
+      <h3>Melebur</h3>
+      <p>Perak murni dilebur pada suhu 960°C, dituang ke cetakan menjadi batangan atau kawat sesuai kebutuhan desain.</p>
+    </div>
+    <div class="proses-item">
+      <div class="proses-num">02 — Tempa</div>
+      <h3>Menempa</h3>
+      <p>Batangan ditempa dan digulung hingga menjadi lembaran atau kawat sehalus rambut, siap dibentuk pengrajin.</p>
+    </div>
+    <div class="proses-item">
+      <div class="proses-num">03 — Ukir</div>
+      <h3>Filigree</h3>
+      <p>Kawat perak dipilin dan dirangkai membentuk motif sulur, bunga, atau geometris — dikerjakan tanpa cetakan.</p>
+    </div>
+    <div class="proses-item">
+      <div class="proses-num">04 — Poles</div>
+      <h3>Memoles</h3>
+      <p>Karya dicuci, dipoles, lalu diberi opsi lapis rhodium agar kilaunya bertahan lebih lama.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONI -->
+<section id="testimoni">
+  <div class="section-head reveal">
+    <p class="eyebrow">Kata Pelanggan</p>
+    <h2>Dipakai, diwariskan,<br><span class="grad-text">diceritakan kembali.</span></h2>
+  </div>
+  <div class="testi-track reveal">
+    <div class="testi-card">
+      <div class="quote-mark grad-text">"</div>
+      <p class="txt">Cincin kawin kami dibuat custom di sini. Motifnya detail sekali dan prosesnya dijelaskan dari awal — terasa seperti pesan langsung ke pengrajinnya.</p>
+      <div class="testi-name">Ayu Ratnasari</div>
+      <div class="testi-role">Bandung</div>
+    </div>
+    <div class="testi-card">
+      <div class="quote-mark grad-text">"</div>
+      <p class="txt">Sudah tiga tahun pakai gelang dari Bintang Silver, warnanya masih bagus karena pakai lapis rhodium. Worth it untuk pemakaian harian.</p>
+      <div class="testi-name">Dimas Prakoso</div>
+      <div class="testi-role">Jakarta</div>
+    </div>
+    <div class="testi-card">
+      <div class="quote-mark grad-text">"</div>
+      <p class="txt">Kalung liontin filigree-nya jadi kado ulang tahun ibu saya. Kemasannya rapi, dan ada kartu penjelasan asal motifnya. Sangat personal.</p>
+      <div class="testi-name">Salsabila Putri</div>
+      <div class="testi-role">Bogor</div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAK -->
+<section class="kontak" id="kontak">
+  <div class="blob blob-3"></div>
+  <div class="reveal" style="position:relative;z-index:2;">
+    <p class="eyebrow">Kontak</p>
+    <h2>Pesan karya<br><span class="serif-italic grad-text">custom</span> Anda.</h2>
+    <p class="lede">Konsultasi desain gratis untuk cincin kawin dan pesanan khusus. Balasan biasanya kurang dari 1x24 jam.</p>
+    <div class="kontak-links">
+      <a href="https://wa.me/6281234567890" target="_blank" rel="noopener">WhatsApp — +62 812‑3456‑7890 <span class="arrow">→</span></a>
+      <a href="mailto:halo@bintangsilver.id">halo@bintangsilver.id <span class="arrow">→</span></a>
+      <a href="https://instagram.com/bintangsilverr_bdg" target="_blank" rel="noopener">@bintangsilverr_bdg <span class="arrow">→</span></a>
+      <a href="#cabang">Lihat 3 Cabang: Bandung, Jakarta, Bogor <span class="arrow">→</span></a>
+    </div>
+  </div>
+  <div class="reveal">
+    <form class="form-card" id="orderForm" onsubmit="return false;">
+      <div class="form-field">
+        <label for="nama">Nama</label>
+        <input id="nama" type="text" placeholder="Nama lengkap" required>
+      </div>
+      <div class="form-field">
+        <label for="kontakInput">Nomor WhatsApp / Email</label>
+        <input id="kontakInput" type="text" placeholder="08xx atau email@domain.com" required>
+      </div>
+      <div class="form-field">
+        <label for="pesan">Detail Pesanan</label>
+        <textarea id="pesan" placeholder="Contoh: cincin kawin ukuran 16, motif melati"></textarea>
+      </div>
+      <button class="form-submit" type="submit">Kirim Permintaan</button>
+      <p class="form-note">Tim kami akan menghubungi Anda untuk konfirmasi desain dan harga.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><img src="logobintang.jpeg" alt="Logo Bintang Silver" style="width:22px;height:22px;border-radius:6px;object-fit:cover;">Bintang Silver</div>
+  <div>© 2026 Bintang Silver, Kotagede. Perak 925 tempaan tangan.</div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    menu.classList.toggle('open');
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    menu.classList.remove('open');
+  }));
+
+  const revealEls = document.querySelectorAll('.reveal:not(.in)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  const form = document.getElementById('orderForm');
+  form.addEventListener('submit', () => {
+    const nama = document.getElementById('nama').value || 'Anda';
+    const pesan = document.getElementById('pesan').value || '';
+    const text = encodeURIComponent(`Halo Bintang Silver, saya ${nama}. Saya ingin memesan: ${pesan}`);
+    window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
+  });
+</script>
+</body>
+</html>
